@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	topic             = "topic.v1"
+	topic             = "ping.v1"
 	kafkaURL          = "localhost:19092"
 	schemaRegistryURL = "http://localhost:8081"
 )
