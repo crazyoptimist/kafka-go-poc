@@ -12,18 +12,19 @@ const (
 	nullOffset = -1
 )
 
-// SR refers to Schema Registry
-type SRProducer interface {
+type Producer interface {
 	ProduceMessage(msg proto.Message, topic string) (int64, error)
 	Close()
 }
 
-type srProducer struct {
+type kafkaProducer struct {
 	producer   *kafka.Producer
 	serializer serde.Serializer
 }
 
-func NewProducer(kafkaURL, srURL string) (SRProducer, error) {
+var _ Producer = (*kafkaProducer)(nil)
+
+func NewProducer(kafkaURL, srURL string) (Producer, error) {
 	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": kafkaURL})
 	if err != nil {
 		return nil, err
@@ -36,14 +37,14 @@ func NewProducer(kafkaURL, srURL string) (SRProducer, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &srProducer{
+	return &kafkaProducer{
 		producer:   p,
 		serializer: s,
 	}, nil
 }
 
 // ProduceMessage sends serialized message to kafka using schema registry
-func (p *srProducer) ProduceMessage(msg proto.Message, topic string) (int64, error) {
+func (p *kafkaProducer) ProduceMessage(msg proto.Message, topic string) (int64, error) {
 	kafkaChan := make(chan kafka.Event)
 	defer close(kafkaChan)
 	payload, err := p.serializer.Serialize(topic, msg)
@@ -67,7 +68,7 @@ func (p *srProducer) ProduceMessage(msg proto.Message, topic string) (int64, err
 }
 
 // Close schema registry and Kafka
-func (p *srProducer) Close() {
+func (p *kafkaProducer) Close() {
 	p.serializer.Close()
 	p.producer.Close()
 }
