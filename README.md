@@ -21,3 +21,13 @@ make generate
 ```
 go run ./cmd/producer
 ```
+
+### Run Consumer
+
+```
+go run ./cmd/consumer
+```
+
+### License
+
+MIT
