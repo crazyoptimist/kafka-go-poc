@@ -21,7 +21,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	pingMSG := ping.PingMessage{Value: 55}
+	pingMSG := ping.PingMessage{Value: 55, Message: "Hello"}
 	offset, err := producer.ProduceMessage(&pingMSG, topic)
 	if err != nil {
 		log.Fatal(err)

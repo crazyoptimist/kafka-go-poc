@@ -6,4 +6,5 @@ package ping;
 
 message PingMessage {
   int32 Value = 1;
+  string Message = 2;
 }
